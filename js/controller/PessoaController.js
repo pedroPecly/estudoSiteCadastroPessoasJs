@@ -1,7 +1,7 @@
-class PessoaController{
+class PessoaController {
     _pessoas = [];
 
-    inicializaElementos(){
+    inicializaElementos() {
         this.inpCodigo = document.querySelector("#inpCodigo");
         this.btnSalvar = document.querySelector("#btnSalvar");
         this.bodyPessoa = document.querySelector("#bodyPessoa");
@@ -11,20 +11,20 @@ class PessoaController{
         this.divTotal = document.querySelector("#divTotal");
     }
 
-    excluir(pId){
-        if(pId){
-            if (confirm('Deseja excluir?')){
+    excluir(pId) {
+        if (pId) {
+            if (confirm('Deseja excluir?')) {
                 this._pessoas = this._pessoas.filter(p => p.id != pId);
             }
         }
         this.exibir();
     }
 
-    alterar(pId){
-        if(pId){
+    alterar(pId) {
+        if (pId) {
             let p = this._pessoas.filter(p => p.id == pId)[0];
 
-            if(p){
+            if (p) {
                 this.inpCodigo.value = p.id;
                 this.inpNome.value = p.nome;
                 this.inpSobrenome.value = p.sobrenome;
@@ -33,31 +33,31 @@ class PessoaController{
         }
     }
 
-    salvar(pId, pNome, pSobrenome, pSalario){
+    salvar(pId, pNome, pSobrenome, pSalario) {
         let p;
-        if(pId == 0){
+        if (pId == 0) {
             p = new Pessoa();
         } else {
-          p = this._pessoas.filter(p => p.id == pId)[0];
-          if(!p)
-            p = new Pessoa();
+            p = this._pessoas.filter(p => p.id == pId)[0];
+            if (!p)
+                p = new Pessoa();
         }
         p.nome = pNome;
         p.sobrenome = pSobrenome;
         p.salario = pSalario;
 
-        if(pId == 0){
+        if (pId == 0) {
             p.id = this._pessoas.length + 1;
             this._pessoas.push(p);
         }
 
     }
 
-    exibir(){
+    exibir() {
         let linhas = "";
         this._pessoas.forEach(p => {
-            linhas += 
-            `<tr>
+            linhas +=
+                `<tr>
                <td>${p.id}</td>
                <td>${p.nome}</td>
                <td>${p.sobrenome}</td>
@@ -75,52 +75,55 @@ class PessoaController{
         this.calculaTotal();
     }
 
-    eventosDB(){
+    eventosDB() {
         let self = this;
         this.bodyPessoa.querySelectorAll('.btn-db').forEach(btn => {
             let id = btn.id.toUpperCase();
-                       
-            if (id.indexOf('BTNEXCLUIR') != -1){
+
+            if (id.indexOf('BTNEXCLUIR') != -1) {
                 btn.onclick = () => {
                     self.excluir(btn.dataset.id);
                 }
             }
 
-            if (id.indexOf('BTNALTERAR') != -1){
+            if (id.indexOf('BTNALTERAR') != -1) {
                 btn.onclick = () => {
                     self.alterar(btn.dataset.id);
                 }
-            }          
+            }
         });
     }
 
-    calculaTotal(){
-        let total = this._pessoas.reduce((pTotal, p) =>{
+    calculaTotal() {
+        let total = this._pessoas.reduce((pTotal, p) => {
             return pTotal + parseFloat(p.salario);
-        },0);
+        }, 0);
         this.divTotal.innerHTML = `R$ ${total}`;
     }
 
-    limpar(){
+    limpar() {
         this.inpNome.value = "";
         this.inpSalario.value = 0;
         this.inpSobrenome.value = "";
         this.inpCodigo.value = 0;
     }
 
-    inicializaEventos(){
+    inicializaEventos() {
         this.btnSalvar.onclick = () => {
-            this.salvar(this.inpCodigo.value,this.inpNome.value,this.inpSobrenome.value,
-                this.inpSalario.value);
+            if (this.inpNome.value && this.inpSobrenome.value && this.inpSalario.value) {
+                this.salvar(this.inpCodigo.value, this.inpNome.value, this.inpSobrenome.value, this.inpSalario.value);
+                this.exibir();
+                this.limpar();
+                this.inpNome.focus();
+            } else {
+                alert("Campos não preenchidos corretamente");
+            }
             
-            this.exibir();
-            this.limpar();
-            this.inpNome.focus();
-
+            
         }
     }
 
-    constructor(){
+    constructor() {
         this.inicializaElementos();
         this.inicializaEventos();
     }
